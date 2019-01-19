@@ -15,8 +15,7 @@ browser.menus.create({
         }
 });
 
-browser.menus.onShown.addListener((info, tab) =>
-{
+browser.menus.onShown.addListener((info) => {
         if (info.menuIds.includes(MENU_ID)) {
                 updateMenuTitle(info.contexts);
         }
@@ -33,8 +32,7 @@ function updateMenuTitle(contexts)
         browser.menus.update(MENU_ID, { title: title }).then(() => browser.menus.refresh());
 }
 
-browser.menus.onClicked.addListener((info, tab) =>
-{
+browser.menus.onClicked.addListener((info) => {
         if (info.menuItemId === MENU_ID) {
                 if (info.selectionText) {
                         privatelySearch(info.selectionText);
@@ -48,8 +46,7 @@ function privatelySearch(term)
 {
         const searchUrl = SEARCH_ENGINE_BASE + encodeURIComponent(term);
 
-        getExistingPrivateWindow().then((existingWin) =>
-        {
+        getExistingPrivateWindow().then((existingWin) => {
                 if (existingWin) {
                         browser.tabs.create({ windowId: existingWin.id, url: searchUrl });
                         browser.windows.update(existingWin.id, { focused: true });
@@ -61,17 +58,14 @@ function privatelySearch(term)
 
 function getExistingPrivateWindow()
 {
-        return new Promise((resolve, reject) =>
-        {
-                browser.windows.getLastFocused().then((lastWin) =>
-                {
+        return new Promise((resolve, reject) => {
+                browser.windows.getLastFocused().then((lastWin) => {
                         if (isPrivate(lastWin)) {
                                 resolve(lastWin);
                                 return;
                         }
 
-                        browser.windows.getAll().then((allWins) =>
-                        {
+                        browser.windows.getAll().then((allWins) => {
                                 for (win of allWins) {
                                         if (isPrivate(win)) {
                                                 resolve(win);
