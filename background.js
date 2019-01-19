@@ -58,23 +58,11 @@ function privatelySearch(term)
 
 function getExistingPrivateWindow()
 {
-        return new Promise((resolve, reject) => {
-                browser.windows.getLastFocused().then((lastWin) => {
-                        if (isPrivate(lastWin)) {
-                                resolve(lastWin);
-                                return;
-                        }
-
-                        browser.windows.getAll().then((allWins) => {
-                                for (win of allWins) {
-                                        if (isPrivate(win)) {
-                                                resolve(win);
-                                                return;
-                                        }
-                                }
-                                resolve(null);
-                        });
-                });
+        return browser.windows.getLastFocused().then((lastWin) => {
+                if (isPrivate(lastWin)) {
+                        return lastWin;
+                }
+                return browser.windows.getAll().then((allWins) => allWins.find(isPrivate));
         });
 }
 
